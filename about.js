@@ -5,11 +5,11 @@
             zGap: 800,
             loopSize: 0, // Calculated
             camSpeed: 2.5,
-            colors: ['#ff003c', '#00f3ff', '#ccff00', '#ffffff']
+            colors: ['#0073ffff', '#f7f7f7ff', '#ffffffff', '#ffffff']
         };
         CONFIG.loopSize = CONFIG.itemCount * CONFIG.zGap;
 
-        const TEXTS = ["NOAH", "TAHMID", "YAHOO", ];
+        const TEXTS = ["TAHMID", "NOAH", "JEHU","ARAFAT" ];
 
         // --- STATE ---
         const state = {
@@ -22,7 +22,7 @@
 
         const world = document.getElementById('world');
         const viewport = document.getElementById('viewport');
-        const items = [];
+        const items = [];     
 
         // --- INIT ---
         function init() {

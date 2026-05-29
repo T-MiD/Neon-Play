@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookie Clicker Game</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  text-align: center;
+  color: white;
+  overflow-x: hidden;
+
+  /* 🌄 GAME BACKGROUND */
+  background: linear-gradient(to bottom, #1e3c72, #2a5298);
+}
+
+/* floating cookie particles */
+.cookie-bg {
+  position: fixed;
+  top: -50px;
+  font-size: 24px;
+  animation: fall linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes fall {
+  0% { transform: translateY(-50px); }
+  100% { transform: translateY(110vh); }
+}
+
+/* main cookie */
+#cookie {
+  font-size: 150px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.05s;
+  margin-top: 30px;
+  filter: drop-shadow(0 0 10px gold);
+}
+
+#cookie:active {
+  transform: scale(0.95);
+}
+
+/* panels */
+.panel {
+  background: rgba(0,0,0,0.4);
+  margin: 10px auto;
+  padding: 15px;
+  border-radius: 12px;
+  width: 420px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+button {
+  padding: 8px;
+  cursor: pointer;
+}
+
+h1 {
+  text-shadow: 0 0 10px black;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🍪 Cookie Clicker Game</h1>
+
+<div id="cookie">🍪</div>
+
+<h2>Cookies: <span id="count">0</span></h2>
+
+<div class="panel">
+  <h3>🛒 Shop</h3>
+  <div id="shop"></div>
+</div>
+
+<div class="panel">
+  <h3>📦 Inventory</h3>
+  <div id="inv"></div>
+</div>
+
+<script>
+let cookies = 0;
+let cps = 0;
+
+const items = [
+  { name: "Cursor", cost: 10, owned: 0, cps: 1 },
+  { name: "Grandma", cost: 50, owned: 0, cps: 5 },
+  { name: "Bakery", cost: 200, owned: 0, cps: 20 }
+];
+
+const cookieEl = document.getElementById("cookie");
+const countEl = document.getElementById("count");
+const shopEl = document.getElementById("shop");
+const invEl = document.getElementById("inv");
+
+function price(item) {
+  return Math.floor(item.cost * Math.pow(1.2, item.owned));
+}
+
+function update() {
+  countEl.textContent = Math.floor(cookies);
+  renderShop();
+  renderInv();
+}
+
+cookieEl.onclick = () => {
+  cookies += 1;
+  update();
+};
+
+function buy(i) {
+  let item = items[i];
+  let cost = price(item);
+
+  if (cookies >= cost) {
+    cookies -= cost;
+    item.owned++;
+    cps += item.cps;
+    update();
+  }
+}
+
+function renderShop() {
+  shopEl.innerHTML = "";
+  items.forEach((item, i) => {
+    shopEl.innerHTML += `
+      <div>
+        ${item.name} (+${item.cps} CPS)<br>
+        Cost: ${price(item)} 🍪<br>
+        <button onclick="buy(${i})">Buy</button>
+      </div><br>
+    `;
+  });
+}
+
+function renderInv() {
+  invEl.innerHTML = "";
+  items.forEach(item => {
+    if (item.owned > 0) {
+      invEl.innerHTML += `${item.name} x${item.owned}<br>`;
+    }
+  });
+}
+
+setInterval(() => {
+  cookies += cps;
+  update();
+}, 1000);
+
+// 🌟 floating cookies background effect
+function spawnCookie() {
+  const c = document.createElement("div");
+  c.className = "cookie-bg";
+  c.textContent = "🍪";
+  c.style.left = Math.random() * 100 + "vw";
+  c.style.animationDuration = (3 + Math.random() * 5) + "s";
+  document.body.appendChild(c);
+
+  setTimeout(() => c.remove(), 8000);
+}
+
+setInterval(spawnCookie, 400);
+
+update();
+</script>
+
+</body>
+</html>
