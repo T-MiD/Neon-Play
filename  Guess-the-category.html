@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Category Typing Game</title>
+
+<style>
+    *{
+        box-sizing:border-box;
+        margin:0;
+        padding:0;
+        font-family:Arial, Helvetica, sans-serif;
+    }
+
+    body{
+        background:linear-gradient(135deg,#1f2937,#111827);
+        color:white;
+        min-height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        padding:20px;
+    }
+
+    .game{
+        width:800px;
+        max-width:100%;
+        background:#1e293b;
+        border-radius:20px;
+        padding:30px;
+        box-shadow:0 0 25px rgba(0,0,0,.4);
+    }
+
+    h1{
+        text-align:center;
+        margin-bottom:10px;
+        font-size:2.3rem;
+    }
+
+    .subtitle{
+        text-align:center;
+        color:#cbd5e1;
+        margin-bottom:25px;
+    }
+
+    .top{
+        display:flex;
+        justify-content:space-between;
+        gap:15px;
+        margin-bottom:25px;
+        flex-wrap:wrap;
+    }
+
+    .card{
+        flex:1;
+        min-width:150px;
+        background:#334155;
+        padding:15px;
+        border-radius:12px;
+        text-align:center;
+    }
+
+    .card h2{
+        font-size:1rem;
+        margin-bottom:8px;
+        color:#cbd5e1;
+    }
+
+    .card p{
+        font-size:1.8rem;
+        font-weight:bold;
+    }
+
+    .category-box{
+        background:#0f172a;
+        border:2px solid #475569;
+        border-radius:16px;
+        padding:25px;
+        text-align:center;
+        margin-bottom:20px;
+    }
+
+    .category{
+        font-size:2rem;
+        color:#60a5fa;
+        margin-bottom:10px;
+    }
+
+    .instruction{
+        color:#cbd5e1;
+        margin-bottom:10px;
+    }
+
+    input{
+        width:100%;
+        padding:18px;
+        border:none;
+        outline:none;
+        border-radius:12px;
+        font-size:1.2rem;
+        margin-bottom:20px;
+    }
+
+    .feedback{
+        min-height:30px;
+        text-align:center;
+        font-size:1.2rem;
+        margin-bottom:20px;
+    }
+
+    .correct{
+        color:#4ade80;
+    }
+
+    .wrong{
+        color:#f87171;
+    }
+
+    button{
+        width:100%;
+        padding:16px;
+        border:none;
+        border-radius:12px;
+        background:#3b82f6;
+        color:white;
+        font-size:1rem;
+        font-weight:bold;
+        cursor:pointer;
+        transition:.2s;
+    }
+
+    button:hover{
+        background:#2563eb;
+    }
+
+    .used-words{
+        margin-top:25px;
+        background:#0f172a;
+        padding:18px;
+        border-radius:14px;
+    }
+
+    .used-words h3{
+        margin-bottom:10px;
+    }
+
+    .word-list{
+        display:flex;
+        flex-wrap:wrap;
+        gap:10px;
+    }
+
+    .word-chip{
+        background:#334155;
+        padding:8px 12px;
+        border-radius:999px;
+    }
+
+    .game-over{
+        text-align:center;
+        margin-top:20px;
+        font-size:1.5rem;
+        color:#facc15;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+    <h1>⌨️ Category Typing Game</h1>
+    <p class="subtitle">Type words that match the category before time runs out!</p>
+
+    <div class="top">
+        <div class="card">
+            <h2>⏱ Time</h2>
+            <p id="time">30</p>
+        </div>
+
+        <div class="card">
+            <h2>🏆 Score</h2>
+            <p id="score">0</p>
+        </div>
+
+        <div class="card">
+            <h2>🔥 Streak</h2>
+            <p id="streak">0</p>
+        </div>
+    </div>
+
+    <div class="category-box">
+        <div class="instruction">Current Category</div>
+        <div class="category" id="category">Animals</div>
+    </div>
+
+    <input
+        type="text"
+        id="input"
+        placeholder="Type a word and press Enter..."
+        autocomplete="off"
+    />
+
+    <div class="feedback" id="feedback"></div>
+
+    <button onclick="newCategory()">🎲 New Category</button>
+
+    <div class="used-words">
+        <h3>Used Words</h3>
+        <div class="word-list" id="wordList"></div>
+    </div>
+
+    <div class="game-over" id="gameOver"></div>
+</div>
+
+<script>
+const categories = {
+    Animals: [
+        "dog","cat","lion","tiger","elephant","zebra",
+        "giraffe","penguin","bear","wolf","monkey"
+    ],
+
+    Foods: [
+        "pizza","burger","apple","banana","taco",
+        "pasta","rice","salad","cookie","steak"
+    ],
+
+    Countries: [
+        "canada","brazil","japan","india","france",
+        "mexico","italy","china","egypt","spain"
+    ],
+
+    Colors: [
+        "red","blue","green","yellow","purple",
+        "orange","pink","black","white","gray"
+    ],
+
+    Sports: [
+        "soccer","basketball","tennis","golf",
+        "baseball","hockey","cricket","rugby"
+    ],
+
+    Games: [
+        "minecraft","roblox","fortnite","zelda",
+        "mario","tetris","valorant","overwatch"
+    ]
+};
+
+let currentCategory = "";
+let validWords = [];
+let usedWords = [];
+
+let score = 0;
+let streak = 0;
+let time = 30;
+let timer;
+let gameEnded = false;
+
+const categoryEl = document.getElementById("category");
+const inputEl = document.getElementById("input");
+const feedbackEl = document.getElementById("feedback");
+const scoreEl = document.getElementById("score");
+const streakEl = document.getElementById("streak");
+const timeEl = document.getElementById("time");
+const wordListEl = document.getElementById("wordList");
+const gameOverEl = document.getElementById("gameOver");
+
+function startGame(){
+    chooseRandomCategory();
+
+    timer = setInterval(() => {
+        if(gameEnded) return;
+
+        time--;
+        timeEl.textContent = time;
+
+        if(time <= 0){
+            endGame();
+        }
+    },1000);
+}
+
+function chooseRandomCategory(){
+    const keys = Object.keys(categories);
+    currentCategory = keys[Math.floor(Math.random() * keys.length)];
+
+    validWords = categories[currentCategory];
+    usedWords = [];
+
+    categoryEl.textContent = currentCategory;
+    wordListEl.innerHTML = "";
+    feedbackEl.textContent = "";
+
+    inputEl.value = "";
+    inputEl.focus();
+}
+
+function newCategory(){
+    if(gameEnded) return;
+
+    chooseRandomCategory();
+}
+
+function addWordChip(word){
+    const chip = document.createElement("div");
+    chip.className = "word-chip";
+    chip.textContent = word;
+    wordListEl.appendChild(chip);
+}
+
+function showFeedback(message, type){
+    feedbackEl.textContent = message;
+    feedbackEl.className = "feedback " + type;
+}
+
+function updateStats(){
+    scoreEl.textContent = score;
+    streakEl.textContent = streak;
+}
+
+function endGame(){
+    gameEnded = true;
+    clearInterval(timer);
+
+    inputEl.disabled = true;
+
+    gameOverEl.innerHTML = `
+        🎉 Game Over! Final Score: ${score}
+        <br><br>
+        Refresh page to play again.
+    `;
+}
+
+inputEl.addEventListener("keydown", (e) => {
+
+    if(e.key !== "Enter") return;
+
+    const word = inputEl.value.trim().toLowerCase();
+
+    if(!word) return;
+
+    if(usedWords.includes(word)){
+        showFeedback("⚠ Already used!", "wrong");
+        streak = 0;
+        updateStats();
+        inputEl.value = "";
+        return;
+    }
+
+    if(validWords.includes(word)){
+        usedWords.push(word);
+
+        score += 10;
+        streak++;
+
+        if(streak % 5 === 0){
+            score += 25;
+            showFeedback("🔥 STREAK BONUS +25!", "correct");
+        } else {
+            showFeedback("✅ Correct!", "correct");
+        }
+
+        addWordChip(word);
+    } else {
+        streak = 0;
+        showFeedback("❌ Wrong category word!", "wrong");
+    }
+
+    updateStats();
+    inputEl.value = "";
+});
+
+startGame();
+</script>
+
+</body>
+</html>
