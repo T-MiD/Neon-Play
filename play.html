@@ -480,7 +480,7 @@
             <aside class="game-list" aria-label="Game list">
                 <h2>Games</h2>
 
-                <button class="game-option active" type="button" data-title="There Is No Game" data-kind="Puzzle Embed" data-src="thereisnogame.html">
+                <button class="game-option active" type="button" data-game="there-is-no-game" data-title="There Is No Game" data-kind="Puzzle Embed" data-src="thereisnogame.html">
                     <span class="game-icon">NG</span>
                     <span>
                         <span class="game-name">There Is No Game</span>
@@ -488,7 +488,7 @@
                     </span>
                 </button>
 
-                <button class="game-option" type="button" data-title="Typing Battle Arena" data-kind="Typing Game" data-src="Neon-Play-main/typingBattle.html">
+                <button class="game-option" type="button" data-game="typing-battle" data-title="Typing Battle Arena" data-kind="Typing Game" data-src="Neon-Play-main/typingBattle.html">
                     <span class="game-icon">TB</span>
                     <span>
                         <span class="game-name">Typing Battle Arena</span>
@@ -496,7 +496,7 @@
                     </span>
                 </button>
 
-                <button class="game-option" type="button" data-title="Cookie Game" data-kind="Clicker Game" data-src="Neon-Play-main/Cookie-game.html">
+                <button class="game-option" type="button" data-game="cookie-game" data-title="Cookie Game" data-kind="Clicker Game" data-src="Neon-Play-main/Cookie-game.html">
                     <span class="game-icon">CG</span>
                     <span>
                         <span class="game-name">Cookie Game</span>
@@ -504,7 +504,7 @@
                     </span>
                 </button>
 
-                <button class="game-option" type="button" data-title="Guess The Category" data-kind="Quiz Game" data-src="Neon-Play-main/Guess-the-category.html">
+                <button class="game-option" type="button" data-game="guess-the-category" data-title="Guess The Category" data-kind="Quiz Game" data-src="Neon-Play-main/Guess-the-category.html">
                     <span class="game-icon">GC</span>
                     <span>
                         <span class="game-name">Guess The Category</span>
@@ -512,7 +512,7 @@
                     </span>
                 </button>
 
-                <button class="game-option" type="button" data-title="Reaction Game" data-kind="Reflex Game" data-src="Neon-Play-main/Reaction-game.html">
+                <button class="game-option" type="button" data-game="reaction-game" data-title="Reaction Game" data-kind="Reflex Game" data-src="Neon-Play-main/Reaction-game.html">
                     <span class="game-icon">RG</span>
                     <span>
                         <span class="game-name">Reaction Game</span>
@@ -593,6 +593,15 @@
         gameOptions.forEach((option) => {
             option.addEventListener("click", () => setGame(option));
         });
+
+        const requestedGame = new URLSearchParams(window.location.search).get("game");
+        const requestedOption = requestedGame
+            ? document.querySelector(`.game-option[data-game="${requestedGame}"]`)
+            : null;
+
+        if (requestedOption) {
+            setGame(requestedOption);
+        }
 
         reloadGame.addEventListener("click", () => {
             gameFrame.src = gameFrame.src;

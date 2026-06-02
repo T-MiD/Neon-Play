@@ -257,6 +257,7 @@ nav a:hover::after {
     content: "";
     position: absolute;
     inset: 0;
+    pointer-events: none;
 
     background:
         linear-gradient(
@@ -306,6 +307,9 @@ nav a:hover::after {
 }
 
 .play-btn {
+    position: relative;
+    z-index: 1;
+    display: block;
     width: 100%;
     padding: 14px;
 
@@ -316,6 +320,8 @@ nav a:hover::after {
     color: white;
 
     font-weight: 700;
+    text-align: center;
+    text-decoration: none;
     cursor: pointer;
 
     transition: .3s ease;

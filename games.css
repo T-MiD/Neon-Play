@@ -244,7 +244,8 @@ nav a:hover,
     margin-bottom: 22px;
 }
 
-.game-info button {
+.game-info .play-button {
+    display: block;
     width: 100%;
 
     padding: 14px;
@@ -260,12 +261,14 @@ nav a:hover,
 
     color: white;
     font-weight: 700;
+    text-align: center;
+    text-decoration: none;
 
     cursor: pointer;
     transition: .3s;
 }
 
-.game-info button:hover {
+.game-info .play-button:hover {
     transform: scale(1.03);
 }
 
