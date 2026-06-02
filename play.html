@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Play Games | NEON PLAY</title>
+
+    <style>
+        :root {
+            --bg: #070b12;
+            --panel: rgba(255, 255, 255, .07);
+            --panel-strong: rgba(255, 255, 255, .11);
+            --panel-border: rgba(255, 255, 255, .13);
+            --text: #eef4ff;
+            --muted: #9db0c7;
+            --brand: #8b5cf6;
+            --brand2: #06b6d4;
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            color: var(--text);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(139, 92, 246, .24), transparent 28%),
+                radial-gradient(circle at bottom left, rgba(6, 182, 212, .18), transparent 30%),
+                linear-gradient(to bottom, #05070d, #0b1120);
+            overflow-x: hidden;
+        }
+
+        #star-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: .7;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%,
+            100% {
+                opacity: .2;
+                transform: scale(.8);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.4);
+            }
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 8%;
+            background: rgba(10, 15, 25, .72);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, white, var(--brand2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            transition: .25s ease;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--brand2);
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            width: min(1500px, 100%);
+            margin: 0 auto;
+            padding: 38px 8% 48px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2.3rem, 5vw, 4.8rem);
+            line-height: .95;
+            background: linear-gradient(135deg, white 15%, var(--brand2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header p {
+            max-width: 520px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .player-shell {
+            display: grid;
+            grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .player-shell.list-hidden {
+            grid-template-columns: 1fr;
+        }
+
+        .player-shell.list-hidden .game-list {
+            display: none;
+        }
+
+        .game-list,
+        .player-panel {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .36);
+        }
+
+        .game-list {
+            padding: 14px;
+        }
+
+        .game-list h2,
+        .player-title h2 {
+            font-size: 1rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .game-list h2 {
+            margin: 8px 8px 12px;
+            color: var(--muted);
+        }
+
+        .game-option {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 44px 1fr;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            text-align: left;
+            transition: .2s ease;
+        }
+
+        .game-option:hover,
+        .game-option.active {
+            background: var(--panel-strong);
+            border-color: rgba(6, 182, 212, .28);
+        }
+
+        .game-icon {
+            display: grid;
+            place-items: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, .45), rgba(6, 182, 212, .28));
+            font-weight: 800;
+            color: white;
+        }
+
+        .game-name {
+            display: block;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .game-meta {
+            display: block;
+            color: var(--muted);
+            font-size: .85rem;
+            line-height: 1.35;
+        }
+
+        .player-panel {
+            min-height: 660px;
+            overflow: hidden;
+        }
+
+        .player-panel:fullscreen {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            border: 0;
+            border-radius: 0;
+            background:
+                radial-gradient(circle at top right, rgba(139, 92, 246, .18), transparent 32%),
+                linear-gradient(to bottom, #05070d, #0b1120);
+        }
+
+        .player-panel:fullscreen .frame-wrap {
+            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .player-panel:fullscreen .player-toolbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 20;
+            opacity: 0;
+            transform: translateY(-100%);
+            transition: opacity .22s ease, transform .22s ease;
+        }
+
+        .player-panel:fullscreen::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 19;
+            height: 72px;
+        }
+
+        .player-panel:fullscreen.controls-visible .player-toolbar,
+        .player-panel:fullscreen .player-toolbar:focus-within {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .player-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(4, 8, 16, .5);
+        }
+
+        .player-title p {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .05);
+        }
+
+        .control-group .action-btn {
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        .control-group .action-btn + .action-btn {
+            border-left: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        .control-group .action-btn.active {
+            background: rgba(6, 182, 212, .22);
+            color: white;
+        }
+
+        .action-btn {
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, .06);
+            color: var(--text);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, .1);
+            border-color: rgba(6, 182, 212, .38);
+        }
+
+        .action-btn.primary {
+            border: 0;
+            background: linear-gradient(135deg, var(--brand), var(--brand2));
+        }
+
+        .frame-wrap {
+            height: 590px;
+            background: #020617;
+        }
+
+        .frame-wrap.compact {
+            height: 460px;
+        }
+
+        .frame-wrap.tall {
+            height: 720px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #020617;
+        }
+
+        @media (max-width: 900px) {
+            nav {
+                padding: 16px 20px;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                gap: 12px;
+                justify-content: flex-end;
+            }
+
+            main {
+                padding: 28px 20px 34px;
+            }
+
+            .page-header {
+                display: block;
+            }
+
+            .page-header p {
+                margin-top: 14px;
+            }
+
+            .player-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .game-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .game-list h2 {
+                grid-column: 1 / -1;
+            }
+
+            .game-option {
+                margin: 0;
+            }
+
+            .player-panel {
+                min-height: 560px;
+            }
+
+            .frame-wrap {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            nav {
+                display: block;
+            }
+
+            nav ul {
+                margin-top: 14px;
+                justify-content: flex-start;
+            }
+
+            .game-list {
+                grid-template-columns: 1fr;
+            }
+
+            .player-toolbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .toolbar-actions,
+            .action-btn {
+                width: 100%;
+            }
+
+            .control-group {
+                width: 100%;
+            }
+
+            .control-group .action-btn {
+                width: 33.333%;
+            }
+
+            .action-btn {
+                text-align: center;
+            }
+
+            .frame-wrap {
+                height: 460px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="star-container"></div>
+
+    <nav>
+        <div class="logo">NEON PLAY</div>
+
+        <ul>
+            <li><a href="Neon-Play-main/index.html">Home</a></li>
+            <li><a href="Neon-Play-main/games.html">Games</a></li>
+            <li><a href="#" class="active">Play</a></li>
+            <li><a href="Neon-Play-main/about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <main>
+
+
+        <section class="player-shell" aria-label="Embedded game player" id="playerShell">
+            <aside class="game-list" aria-label="Game list">
+                <h2>Games</h2>
+
+                <button class="game-option active" type="button" data-title="There Is No Game" data-kind="Puzzle Embed" data-src="thereisnogame.html">
+                    <span class="game-icon">NG</span>
+                    <span>
+                        <span class="game-name">There Is No Game</span>
+                        <span class="game-meta">Puzzle Embed</span>
+                    </span>
+                </button>
+
+                <button class="game-option" type="button" data-title="Typing Battle Arena" data-kind="Typing Game" data-src="Neon-Play-main/typingBattle.html">
+                    <span class="game-icon">TB</span>
+                    <span>
+                        <span class="game-name">Typing Battle Arena</span>
+                        <span class="game-meta">Typing Game</span>
+                    </span>
+                </button>
+
+                <button class="game-option" type="button" data-title="Cookie Game" data-kind="Clicker Game" data-src="Neon-Play-main/Cookie-game.html">
+                    <span class="game-icon">CG</span>
+                    <span>
+                        <span class="game-name">Cookie Game</span>
+                        <span class="game-meta">Clicker Game</span>
+                    </span>
+                </button>
+
+                <button class="game-option" type="button" data-title="Guess The Category" data-kind="Quiz Game" data-src="Neon-Play-main/Guess-the-category.html">
+                    <span class="game-icon">GC</span>
+                    <span>
+                        <span class="game-name">Guess The Category</span>
+                        <span class="game-meta">Quiz Game</span>
+                    </span>
+                </button>
+
+                <button class="game-option" type="button" data-title="Reaction Game" data-kind="Reflex Game" data-src="Neon-Play-main/Reaction-game.html">
+                    <span class="game-icon">RG</span>
+                    <span>
+                        <span class="game-name">Reaction Game</span>
+                        <span class="game-meta">Reflex Game</span>
+                    </span>
+                </button>
+            </aside>
+
+            <section class="player-panel" id="playerPanel">
+                <div class="player-toolbar">
+                    <div class="player-title">
+                        <h2 id="currentTitle">There Is No Game</h2>
+                        <p id="currentKind">Puzzle Embed</p>
+                    </div>
+
+                    <div class="toolbar-actions">
+                        <div class="control-group" aria-label="Player size">
+                            <button class="action-btn size-btn" type="button" data-size="compact">Small</button>
+                            <button class="action-btn size-btn active" type="button" data-size="default">Default</button>
+                            <button class="action-btn size-btn" type="button" data-size="tall">Tall</button>
+                        </div>
+                        <button class="action-btn" type="button" id="toggleList">Hide List</button>
+                        <button class="action-btn" type="button" id="reloadGame">Reload</button>
+                        <button class="action-btn primary" type="button" id="fullscreenGame">Fullscreen</button>
+                    </div>
+                </div>
+
+                <div class="frame-wrap" id="frameWrap">
+                    <iframe id="gameFrame" title="There Is No Game" src="thereisnogame.html" allowfullscreen></iframe>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script>
+        const starContainer = document.getElementById("star-container");
+
+        for (let i = 0; i < 180; i++) {
+            const star = document.createElement("div");
+            const size = Math.random() * 3;
+
+            star.className = "star";
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.setProperty("--duration", `${2 + Math.random() * 4}s`);
+
+            starContainer.appendChild(star);
+        }
+
+        const gameFrame = document.getElementById("gameFrame");
+        const playerShell = document.getElementById("playerShell");
+        const playerPanel = document.getElementById("playerPanel");
+        const frameWrap = document.getElementById("frameWrap");
+        const currentTitle = document.getElementById("currentTitle");
+        const currentKind = document.getElementById("currentKind");
+        const reloadGame = document.getElementById("reloadGame");
+        const fullscreenGame = document.getElementById("fullscreenGame");
+        const toggleList = document.getElementById("toggleList");
+        const sizeButtons = document.querySelectorAll(".size-btn");
+        const gameOptions = document.querySelectorAll(".game-option");
+
+        function setGame(option) {
+            const title = option.dataset.title;
+            const kind = option.dataset.kind;
+            const src = option.dataset.src;
+
+            gameOptions.forEach((item) => item.classList.remove("active"));
+            option.classList.add("active");
+
+            currentTitle.textContent = title;
+            currentKind.textContent = kind;
+            gameFrame.src = src;
+            gameFrame.title = title;
+        }
+
+        gameOptions.forEach((option) => {
+            option.addEventListener("click", () => setGame(option));
+        });
+
+        reloadGame.addEventListener("click", () => {
+            gameFrame.src = gameFrame.src;
+        });
+
+        fullscreenGame.addEventListener("click", () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+                return;
+            }
+
+            if (playerPanel.requestFullscreen) {
+                playerPanel.requestFullscreen().catch(() => {
+                    fullscreenGame.textContent = "Fullscreen";
+                });
+            }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+            fullscreenGame.textContent = document.fullscreenElement ? "Exit Fullscreen" : "Fullscreen";
+            playerPanel.classList.remove("controls-visible");
+        });
+
+        playerPanel.addEventListener("mousemove", (event) => {
+            if (!document.fullscreenElement) {
+                return;
+            }
+
+            playerPanel.classList.toggle("controls-visible", event.clientY <= 90);
+        });
+
+        playerPanel.addEventListener("mouseleave", () => {
+            playerPanel.classList.remove("controls-visible");
+        });
+
+        toggleList.addEventListener("click", () => {
+            const isHidden = playerShell.classList.toggle("list-hidden");
+            toggleList.textContent = isHidden ? "Show List" : "Hide List";
+        });
+
+        sizeButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const size = button.dataset.size;
+
+                sizeButtons.forEach((item) => item.classList.remove("active"));
+                button.classList.add("active");
+
+                frameWrap.classList.remove("compact", "tall");
+
+                if (size !== "default") {
+                    frameWrap.classList.add(size);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
