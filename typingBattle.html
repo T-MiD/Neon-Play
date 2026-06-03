@@ -1,1484 +1,426 @@
+
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>Typing Battle Arena</title>
-
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ Typing Battle Arena</title>
 
 <style>
-
 *{
-
-margin:0;
-
-padding:0;
-
-box-sizing:border-box;
-
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
-
-
 
 body{
-
-font-family:Arial, sans-serif;
-
-background:
-
-radial-gradient(circle at top,#2563eb,#020617);
-
-overflow:hidden;
-
-color:white;
-
-height:100vh;
-
+    font-family:'Segoe UI',sans-serif;
+    background:
+        radial-gradient(circle at top,
+        #1e293b 0%,
+        #0f172a 50%,
+        #020617 100%);
+    color:white;
+    overflow:hidden;
+    height:100vh;
 }
-
-
 
 .container{
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-height:100vh;
-
-padding:20px;
-
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    padding:20px;
 }
-
-
 
 h1{
-
-font-size:3rem;
-
-margin-bottom:15px;
-
-text-shadow:0 0 15px rgba(255,255,255,0.3);
-
+    font-size:3rem;
+    font-weight:800;
+    margin-bottom:10px;
+    color:#38bdf8;
+    text-shadow:
+        0 0 10px #38bdf8,
+        0 0 30px #38bdf8;
 }
 
-
+.subtitle{
+    color:#94a3b8;
+    margin-bottom:20px;
+}
 
 .scoreboard{
-
-display:flex;
-
-gap:30px;
-
-margin-bottom:20px;
-
-font-size:1.2rem;
-
-background:rgba(255,255,255,0.08);
-
-padding:12px 24px;
-
-border-radius:15px;
-
-backdrop-filter:blur(5px);
-
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+    justify-content:center;
 }
 
+.stat-card{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(56,189,248,0.2);
+    border-radius:16px;
+    padding:12px 18px;
+    backdrop-filter:blur(10px);
+    min-width:120px;
+}
 
+.stat-card span{
+    font-size:1.4rem;
+}
 
 .game-area{
+    width:90%;
+    max-width:900px;
+    height:450px;
+    position:relative;
+    overflow:hidden;
 
-width:90%;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15,23,42,.95),
+            rgba(2,6,23,.98)
+        );
 
-max-width:900px;
+    border:2px solid rgba(56,189,248,.3);
+    border-radius:24px;
 
-height:420px;
-
-background:rgba(255,255,255,0.08);
-
-border:2px solid rgba(255,255,255,0.1);
-
-border-radius:20px;
-
-position:relative;
-
-overflow:hidden;
-
-box-shadow:0 0 25px rgba(0,0,0,0.5);
-
+    box-shadow:
+        0 0 25px rgba(56,189,248,.2);
 }
-
-
 
 .word{
+    position:absolute;
+    font-size:1.6rem;
+    font-weight:bold;
+    color:white;
 
-position:absolute;
+    text-shadow:
+        0 0 8px #38bdf8,
+        0 0 18px #38bdf8;
 
-font-size:1.5rem;
-
-font-weight:bold;
-
-color:white;
-
-text-shadow:0 0 12px rgba(255,255,255,0.5);
-
-animation:glow 1s infinite alternate;
-
+    animation:glow 1s infinite alternate;
 }
-
-
 
 @keyframes glow{
+    from{
+        text-shadow:
+            0 0 8px #38bdf8;
+    }
 
-from{
-
-text-shadow:0 0 5px #fff;
-
+    to{
+        text-shadow:
+            0 0 12px #38bdf8,
+            0 0 28px #8b5cf6;
+    }
 }
 
-to{
-
-text-shadow:0 0 20px #38bdf8;
-
+.controls{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
 }
-
-}
-
-
 
 input{
+    width:90%;
+    max-width:500px;
+    margin-top:20px;
+    padding:16px;
 
-margin-top:20px;
+    font-size:1.1rem;
+    text-align:center;
 
-width:90%;
+    color:white;
+    background:rgba(255,255,255,.05);
 
-max-width:500px;
+    border:1px solid rgba(56,189,248,.3);
+    border-radius:14px;
 
-padding:15px;
-
-border:none;
-
-border-radius:12px;
-
-font-size:1.2rem;
-
-outline:none;
-
-text-align:center;
-
+    outline:none;
 }
 
-
+input:focus{
+    border-color:#38bdf8;
+    box-shadow:0 0 20px rgba(56,189,248,.4);
+}
 
 button{
+    margin-top:15px;
+    padding:14px 28px;
+    border:none;
+    border-radius:14px;
 
-margin-top:20px;
+    background:
+        linear-gradient(
+            135deg,
+            #38bdf8,
+            #8b5cf6
+        );
 
-padding:12px 24px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
 
-border:none;
-
-border-radius:12px;
-
-background:#38bdf8;
-
-color:white;
-
-font-size:1rem;
-
-cursor:pointer;
-
-transition:0.2s;
-
+    transition:.25s;
 }
-
-
 
 button:hover{
-
-transform:scale(1.05);
-
-background:#0ea5e9;
-
+    transform:scale(1.05);
 }
-
-
 
 .game-over{
+    position:absolute;
+    inset:0;
 
-position:absolute;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
 
-inset:0;
-
-background:rgba(0,0,0,0.85);
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-visibility:hidden;
-
-z-index:10;
-
+    background:rgba(0,0,0,.9);
+    visibility:hidden;
+    z-index:10;
 }
-
-
 
 .game-over h2{
-
-font-size:3rem;
-
-margin-bottom:10px;
-
+    font-size:3rem;
+    color:#ef4444;
+    margin-bottom:10px;
 }
-
-
 
 .game-over p{
-
-font-size:1.3rem;
-
+    font-size:1.4rem;
+    margin-bottom:15px;
 }
-
 </style>
-
 </head>
-
-
 
 <body>
 
-
-
 <div class="container">
 
+    <h1>⚔️ Typing Battle Arena</h1>
+    <p class="subtitle">Destroy the falling words before they reach the bottom.</p>
 
+    <div class="scoreboard">
 
-<h1>⚔️ Typing Battle Arena</h1>
+        <div class="stat-card">
+            <span>🏆</span>
+            <div>
+                <small>Score</small>
+                <h3 id="score">0</h3>
+            </div>
+        </div>
 
+        <div class="stat-card">
+            <span>❤️</span>
+            <div>
+                <small>Lives</small>
+                <h3 id="lives">5</h3>
+            </div>
+        </div>
 
+        <div class="stat-card">
+            <span>⚡</span>
+            <div>
+                <small>Level</small>
+                <h3 id="level">1</h3>
+            </div>
+        </div>
 
-<div class="scoreboard">
+    </div>
 
-<div>🏆 Score: <span id="score">0</span></div>
+    <div class="game-area" id="gameArea">
 
-<div>❤️ Lives: <span id="lives">5</span></div>
+        <div class="game-over" id="gameOver">
+            <h2>💀 GAME OVER</h2>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button onclick="restartGame()">Play Again</button>
+        </div>
 
-<div>⚡ Level: <span id="level">1</span></div>
+    </div>
 
-</div>
+    <div class="controls">
+        <input
+            type="text"
+            id="input"
+            autocomplete="off"
+            placeholder="⌨️ Type words here..."
+        >
 
-
-
-<div class="game-area" id="gameArea">
-
-
-
-<div class="game-over" id="gameOver">
-
-<h2>💀 Game Over</h2>
-
-<p>Final Score: <span id="finalScore">0</span></p>
-
-</div>
-
-
-
-</div>
-
-
-
-<input
-
-type="text"
-
-id="input"
-
-placeholder="Type the falling words..."
-
-autocomplete="off"
-
-/>
-
-
-
-<button onclick="restartGame()">Restart Game</button>
-
-
+        <button onclick="restartGame()">Restart Game</button>
+    </div>
 
 </div>
-
-
 
 <script>
-
-
-
 const WORDS = [
-
-"javascript",
-
-"dragon",
-
-"galaxy",
-
-"battle",
-
-"wizard",
-
-"rocket",
-
-"victory",
-
-"lightning",
-
-"adventure",
-
-"typing",
-
-"challenge",
-
-"keyboard",
-
-"future",
-
-"pixel",
-
-"speed",
-
-"gaming",
-
-"energy",
-
-"cyber",
-
-"ninja",
-
-"storm"
-
+"javascript","dragon","galaxy","battle","wizard",
+"rocket","victory","lightning","adventure","typing",
+"challenge","keyboard","future","pixel","speed",
+"gaming","energy","cyber","ninja","storm"
 ];
 
-
-
 const gameArea = document.getElementById("gameArea");
-
 const input = document.getElementById("input");
 
-
-
 const scoreEl = document.getElementById("score");
-
 const livesEl = document.getElementById("lives");
-
 const levelEl = document.getElementById("level");
 
-
-
 const gameOverEl = document.getElementById("gameOver");
-
 const finalScoreEl = document.getElementById("finalScore");
 
-
-
 let activeWords = [];
-
-
-
 let score = 0;
-
 let lives = 5;
-
 let level = 1;
-
-
-
+let speed = 1;
 let gameRunning = true;
 
-
-
-let speed = 1;
-
-
-
 function randomWord(){
-
-return WORDS[Math.floor(Math.random() * WORDS.length)];
-
+    return WORDS[Math.floor(Math.random()*WORDS.length)];
 }
-
-
 
 function spawnWord(){
 
+    if(!gameRunning) return;
 
+    const word = document.createElement("div");
+    word.className = "word";
 
-if(!gameRunning) return;
+    const text = randomWord();
 
+    word.textContent = text;
+    word.style.left =
+        Math.random() * (gameArea.clientWidth - 150) + "px";
 
+    word.style.top = "-40px";
 
-const word = document.createElement("div");
+    gameArea.appendChild(word);
 
-
-
-word.className = "word";
-
-
-
-const text = randomWord();
-
-
-
-word.innerText = text;
-
-
-
-word.style.left =
-
-Math.random() * (gameArea.clientWidth - 150) + "px";
-
-
-
-word.style.top = "-30px";
-
-
-
-gameArea.appendChild(word);
-
-
-
-activeWords.push({
-
-el: word,
-
-text,
-
-y: -30
-
-});
-
+    activeWords.push({
+        el:word,
+        text:text,
+        y:-40
+    });
 }
-
-
 
 function updateWords(){
 
+    for(let i = activeWords.length - 1; i >= 0; i--){
 
+        const wordObj = activeWords[i];
 
-activeWords.forEach((wordObj,index)=>{
+        wordObj.y += speed;
+        wordObj.el.style.top = wordObj.y + "px";
 
+        if(wordObj.y > gameArea.clientHeight - 40){
 
+            wordObj.el.remove();
+            activeWords.splice(i,1);
 
-wordObj.y += speed;
-
-
-
-wordObj.el.style.top = wordObj.y + "px";
-
-
-
-if(wordObj.y > gameArea.clientHeight - 40){
-
-
-
-wordObj.el.remove();
-
-
-
-activeWords.splice(index,1);
-
-
-
-loseLife();
-
+            loseLife();
+        }
+    }
 }
-
-});
-
-}
-
-
 
 function loseLife(){
 
+    lives--;
 
+    livesEl.textContent = lives;
 
-lives--;
-
-
-
-livesEl.innerText = lives;
-
-
-
-flashScreen();
-
-
-
-if(lives <= 0){
-
-endGame();
-
+    if(lives <= 0){
+        endGame();
+    }
 }
-
-}
-
-
-
-function flashScreen(){
-
-
-
-document.body.style.background =
-
-"radial-gradient(circle at top,#dc2626,#020617)";
-
-
-
-setTimeout(()=>{
-
-document.body.style.background =
-
-"radial-gradient(circle at top,#2563eb,#020617)";
-
-},150);
-
-}
-
-
 
 function endGame(){
 
+    gameRunning = false;
 
-
-gameRunning = false;
-
-
-
-finalScoreEl.innerText = score;
-
-
-
-gameOverEl.style.visibility = "visible";
-
+    finalScoreEl.textContent = score;
+    gameOverEl.style.visibility = "visible";
 }
-
-
 
 function restartGame(){
-
-location.reload();
-
+    location.reload();
 }
-
-
 
 input.addEventListener("input",()=>{
 
+    const typed = input.value.trim().toLowerCase();
 
+    for(let i = activeWords.length - 1; i >= 0; i--){
 
-const typed = input.value.trim();
+        const wordObj = activeWords[i];
 
+        if(typed === wordObj.text){
 
+            createExplosion(wordObj);
 
-activeWords.forEach((wordObj,index)=>{
+            wordObj.el.remove();
+            activeWords.splice(i,1);
 
+            score += 10;
+            scoreEl.textContent = score;
 
+            input.value = "";
 
-if(typed === wordObj.text){
+            if(score % 50 === 0){
 
+                level++;
+                speed += 0.4;
 
+                levelEl.textContent = level;
+            }
 
-createExplosion(wordObj.el);
-
-
-
-wordObj.el.remove();
-
-
-
-activeWords.splice(index,1);
-
-
-
-score += 10;
-
-
-
-scoreEl.innerText = score;
-
-
-
-input.value = "";
-
-
-
-if(score % 50 === 0){
-
-
-
-level++;
-
-
-
-levelEl.innerText = level;
-
-
-
-speed += 0.4;
-
-}
-
-}
-
+            break;
+        }
+    }
 });
 
-});
+function createExplosion(wordObj){
 
+    const boom = document.createElement("div");
 
+    boom.innerHTML = "💥";
+    boom.style.position = "absolute";
+    boom.style.left = wordObj.el.style.left;
+    boom.style.top = wordObj.y + "px";
+    boom.style.fontSize = "2rem";
 
-function createExplosion(el){
+    gameArea.appendChild(boom);
 
-
-
-const rect = el.getBoundingClientRect();
-
-
-
-const boom = document.createElement("div");
-
-
-
-boom.innerHTML = "💥";
-
-
-
-boom.style.position = "absolute";
-
-
-
-boom.style.left = rect.left + "px";
-
-
-
-boom.style.top = rect.top + "px";
-
-
-
-boom.style.fontSize = "2rem";
-
-
-
-boom.style.pointerEvents = "none";
-
-
-
-document.body.appendChild(boom);
-
-
-
-setTimeout(()=>{
-
-boom.remove();
-
-},400);
-
+    setTimeout(()=>{
+        boom.remove();
+    },400);
 }
-
-
 
 setInterval(()=>{
-
-if(gameRunning){
-
-updateWords();
-
-}
-
+    if(gameRunning){
+        updateWords();
+    }
 },16);
 
-
-
 setInterval(()=>{
-
-if(gameRunning){
-
-spawnWord();
-
-}
-
+    if(gameRunning){
+        spawnWord();
+    }
 },1600);
 
-
-
 spawnWord();
-
-
 
 input.focus();
-
-
-
 </script>
 
-
-
 </body>
-
 </html>
 
-
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<title>Typing Battle Arena</title>
-
-
-
-<style>
-
-*{
-
-margin:0;
-
-padding:0;
-
-box-sizing:border-box;
-
-}
-
-
-
-body{
-
-font-family:Arial, sans-serif;
-
-background:
-
-radial-gradient(circle at top,#2563eb,#020617);
-
-overflow:hidden;
-
-color:white;
-
-height:100vh;
-
-}
-
-
-
-.container{
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-height:100vh;
-
-padding:20px;
-
-}
-
-
-
-h1{
-
-font-size:3rem;
-
-margin-bottom:15px;
-
-text-shadow:0 0 15px rgba(255,255,255,0.3);
-
-}
-
-
-
-.scoreboard{
-
-display:flex;
-
-gap:30px;
-
-margin-bottom:20px;
-
-font-size:1.2rem;
-
-background:rgba(255,255,255,0.08);
-
-padding:12px 24px;
-
-border-radius:15px;
-
-backdrop-filter:blur(5px);
-
-}
-
-
-
-.game-area{
-
-width:90%;
-
-max-width:900px;
-
-height:420px;
-
-background:rgba(255,255,255,0.08);
-
-border:2px solid rgba(255,255,255,0.1);
-
-border-radius:20px;
-
-position:relative;
-
-overflow:hidden;
-
-box-shadow:0 0 25px rgba(0,0,0,0.5);
-
-}
-
-
-
-.word{
-
-position:absolute;
-
-font-size:1.5rem;
-
-font-weight:bold;
-
-color:white;
-
-text-shadow:0 0 12px rgba(255,255,255,0.5);
-
-animation:glow 1s infinite alternate;
-
-}
-
-
-
-@keyframes glow{
-
-from{
-
-text-shadow:0 0 5px #fff;
-
-}
-
-to{
-
-text-shadow:0 0 20px #38bdf8;
-
-}
-
-}
-
-
-
-input{
-
-margin-top:20px;
-
-width:90%;
-
-max-width:500px;
-
-padding:15px;
-
-border:none;
-
-border-radius:12px;
-
-font-size:1.2rem;
-
-outline:none;
-
-text-align:center;
-
-}
-
-
-
-button{
-
-margin-top:20px;
-
-padding:12px 24px;
-
-border:none;
-
-border-radius:12px;
-
-background:#38bdf8;
-
-color:white;
-
-font-size:1rem;
-
-cursor:pointer;
-
-transition:0.2s;
-
-}
-
-
-
-button:hover{
-
-transform:scale(1.05);
-
-background:#0ea5e9;
-
-}
-
-
-
-.game-over{
-
-position:absolute;
-
-inset:0;
-
-background:rgba(0,0,0,0.85);
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-visibility:hidden;
-
-z-index:10;
-
-}
-
-
-
-.game-over h2{
-
-font-size:3rem;
-
-margin-bottom:10px;
-
-}
-
-
-
-.game-over p{
-
-font-size:1.3rem;
-
-}
-
-</style>
-
-</head>
-
-
-
-<body>
-
-
-
-<div class="container">
-
-
-
-<h1>⚔️ Typing Battle Arena</h1>
-
-
-
-<div class="scoreboard">
-
-<div>🏆 Score: <span id="score">0</span></div>
-
-<div>❤️ Lives: <span id="lives">5</span></div>
-
-<div>⚡ Level: <span id="level">1</span></div>
-
-</div>
-
-
-
-<div class="game-area" id="gameArea">
-
-
-
-<div class="game-over" id="gameOver">
-
-<h2>💀 Game Over</h2>
-
-<p>Final Score: <span id="finalScore">0</span></p>
-
-</div>
-
-
-
-</div>
-
-
-
-<input
-
-type="text"
-
-id="input"
-
-placeholder="Type the falling words..."
-
-autocomplete="off"
-
-/>
-
-
-
-<button onclick="restartGame()">Restart Game</button>
-
-
-
-</div>
-
-
-
-<script>
-
-
-
-const WORDS = [
-
-"javascript",
-
-"dragon",
-
-"galaxy",
-
-"battle",
-
-"wizard",
-
-"rocket",
-
-"victory",
-
-"lightning",
-
-"adventure",
-
-"typing",
-
-"challenge",
-
-"keyboard",
-
-"future",
-
-"pixel",
-
-"speed",
-
-"gaming",
-
-"energy",
-
-"cyber",
-
-"ninja",
-
-"storm"
-
-];
-
-
-
-const gameArea = document.getElementById("gameArea");
-
-const input = document.getElementById("input");
-
-
-
-const scoreEl = document.getElementById("score");
-
-const livesEl = document.getElementById("lives");
-
-const levelEl = document.getElementById("level");
-
-
-
-const gameOverEl = document.getElementById("gameOver");
-
-const finalScoreEl = document.getElementById("finalScore");
-
-
-
-let activeWords = [];
-
-
-
-let score = 0;
-
-let lives = 5;
-
-let level = 1;
-
-
-
-let gameRunning = true;
-
-
-
-let speed = 1;
-
-
-
-function randomWord(){
-
-return WORDS[Math.floor(Math.random() * WORDS.length)];
-
-}
-
-
-
-function spawnWord(){
-
-
-
-if(!gameRunning) return;
-
-
-
-const word = document.createElement("div");
-
-
-
-word.className = "word";
-
-
-
-const text = randomWord();
-
-
-
-word.innerText = text;
-
-
-
-word.style.left =
-
-Math.random() * (gameArea.clientWidth - 150) + "px";
-
-
-
-word.style.top = "-30px";
-
-
-
-gameArea.appendChild(word);
-
-
-
-activeWords.push({
-
-el: word,
-
-text,
-
-y: -30
-
-});
-
-}
-
-
-
-function updateWords(){
-
-
-
-activeWords.forEach((wordObj,index)=>{
-
-
-
-wordObj.y += speed;
-
-
-
-wordObj.el.style.top = wordObj.y + "px";
-
-
-
-if(wordObj.y > gameArea.clientHeight - 40){
-
-
-
-wordObj.el.remove();
-
-
-
-activeWords.splice(index,1);
-
-
-
-loseLife();
-
-}
-
-});
-
-}
-
-
-
-function loseLife(){
-
-
-
-lives--;
-
-
-
-livesEl.innerText = lives;
-
-
-
-flashScreen();
-
-
-
-if(lives <= 0){
-
-endGame();
-
-}
-
-}
-
-
-
-function flashScreen(){
-
-
-
-document.body.style.background =
-
-"radial-gradient(circle at top,#dc2626,#020617)";
-
-
-
-setTimeout(()=>{
-
-document.body.style.background =
-
-"radial-gradient(circle at top,#2563eb,#020617)";
-
-},150);
-
-}
-
-
-
-function endGame(){
-
-
-
-gameRunning = false;
-
-
-
-finalScoreEl.innerText = score;
-
-
-
-gameOverEl.style.visibility = "visible";
-
-}
-
-
-
-function restartGame(){
-
-location.reload();
-
-}
-
-
-
-input.addEventListener("input",()=>{
-
-
-
-const typed = input.value.trim();
-
-
-
-activeWords.forEach((wordObj,index)=>{
-
-
-
-if(typed === wordObj.text){
-
-
-
-createExplosion(wordObj.el);
-
-
-
-wordObj.el.remove();
-
-
-
-activeWords.splice(index,1);
-
-
-
-score += 10;
-
-
-
-scoreEl.innerText = score;
-
-
-
-input.value = "";
-
-
-
-if(score % 50 === 0){
-
-
-
-level++;
-
-
-
-levelEl.innerText = level;
-
-
-
-speed += 0.4;
-
-}
-
-}
-
-});
-
-});
-
-
-
-function createExplosion(el){
-
-
-
-const rect = el.getBoundingClientRect();
-
-
-
-const boom = document.createElement("div");
-
-
-
-boom.innerHTML = "💥";
-
-
-
-boom.style.position = "absolute";
-
-
-
-boom.style.left = rect.left + "px";
-
-
-
-boom.style.top = rect.top + "px";
-
-
-
-boom.style.fontSize = "2rem";
-
-
-
-boom.style.pointerEvents = "none";
-
-
-
-document.body.appendChild(boom);
-
-
-
-setTimeout(()=>{
-
-boom.remove();
-
-},400);
-
-}
-
-
-
-setInterval(()=>{
-
-if(gameRunning){
-
-updateWords();
-
-}
-
-},16);
-
-
-
-setInterval(()=>{
-
-if(gameRunning){
-
-spawnWord();
-
-}
-
-},1600);
-
-
-
-spawnWord();
-
-
-
-input.focus();
-
-
-
-</script>
-
-
-
-</body>
-
-</html>
